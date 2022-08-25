@@ -8,6 +8,7 @@ import com.hannesdorfmann.mosby3.mvp.MvpView
 import com.revature.dash.domain.routine.RunRoutine
 import com.revature.dash.model.data.RunDay
 import com.revature.dash.model.data.RunItem
+import com.revature.dash.presentation.controllers.run.RunController
 import com.revature.dash.presentation.controllers.title.TitleController
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -34,7 +35,7 @@ class MainMenuPresenter(
 
         val startClicked = intent { it.startRunClick() }
             .doOnNext{ router->
-                router.pushController(RouterTransaction.with(TitleController())
+                router.pushController(RouterTransaction.with(RunController())
                     .pushChangeHandler(FadeChangeHandler())
                     .popChangeHandler(FadeChangeHandler()))
             }
