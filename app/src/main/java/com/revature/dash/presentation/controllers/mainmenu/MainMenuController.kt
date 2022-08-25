@@ -5,13 +5,16 @@ import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bluelinelabs.conductor.Router
 import com.hannesdorfmann.mosby3.MviController
+import com.jakewharton.rxbinding2.view.clicks
 import com.revature.dash.R
 import com.revature.dash.databinding.ControllerMainmenuBinding
 import com.revature.dash.domain.routine.RunRoutine
@@ -31,6 +34,7 @@ class MainMenuController:MviController<MainMenuView,MainMenuPresenter>(),MainMen
     private lateinit var image:ImageView
     private lateinit var recyclerView: RecyclerView
     private lateinit var displayCard:CardView
+    private lateinit var startButton: Button
 
     private var clickTest = PublishSubject.create<Int>()
 
@@ -53,6 +57,7 @@ class MainMenuController:MviController<MainMenuView,MainMenuPresenter>(),MainMen
         progressBar = binding.progressBar
         image = binding.imageMainmenu
         displayCard = binding.cardDescription
+        startButton = binding.buttonStartrun
 
         recyclerView = binding.recyclerMainmenu
         recyclerView.layoutManager = LinearLayoutManager(
@@ -76,6 +81,10 @@ class MainMenuController:MviController<MainMenuView,MainMenuPresenter>(),MainMen
     override fun runItemClick(): Observable<Int> =
         clickTest
 
+    override fun startRunClick(): Observable<Router> = startButton.clicks().map {
+        router
+    }
+
     override fun render(state: MainMenuVS) {
         when(state){
             is MainMenuVS.Display -> renderDisplay(state)
@@ -93,13 +102,6 @@ class MainMenuController:MviController<MainMenuView,MainMenuPresenter>(),MainMen
 
             adapter.add(RunRecyclerItem(runDay,selected))
         }
-//        adapter.addAll(state.runList.map {
-//            if(state.runList.indexOf(it) == state.selectedDay){
-//                RunRecyclerItem(it,true)
-//            } else {
-//                RunRecyclerItem(it)
-//            }
-//        })
         isLoading(false)
     }
     private fun renderLoading(){
