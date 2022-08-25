@@ -14,8 +14,11 @@ import com.hannesdorfmann.mosby3.MviController
 import com.revature.dash.R
 import com.revature.dash.databinding.ControllerMainmenuBinding
 import com.revature.dash.domain.routine.RunRoutine
+import com.revature.dash.model.data.RunDay
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
+import io.reactivex.Observable
+import io.reactivex.subjects.PublishSubject
 
 class MainMenuController:MviController<MainMenuView,MainMenuPresenter>(),MainMenuView {
 
@@ -26,7 +29,9 @@ class MainMenuController:MviController<MainMenuView,MainMenuPresenter>(),MainMen
     private lateinit var progressBar: ProgressBar
     private lateinit var image:ImageView
     private lateinit var recyclerView: RecyclerView
-    private lateinit var desplayCard:CardView
+    private lateinit var displayCard:CardView
+
+    private var clickTest = PublishSubject.create<Int>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,7 +51,7 @@ class MainMenuController:MviController<MainMenuView,MainMenuPresenter>(),MainMen
         description = binding.textDescriptionMainmenu
         progressBar = binding.progressBar
         image = binding.imageMainmenu
-        desplayCard = binding.cardDescription
+        displayCard = binding.cardDescription
 
         recyclerView = binding.recyclerMainmenu
         recyclerView.layoutManager = LinearLayoutManager(
@@ -56,9 +61,19 @@ class MainMenuController:MviController<MainMenuView,MainMenuPresenter>(),MainMen
 
         recyclerView.adapter = adapter
 
+        adapter.setOnItemClickListener { item, _ ->
+            if(item is RunRecyclerItem){
+                clickTest.onNext(adapter.getAdapterPosition(item))
+            }
+
+        }
+
     }
 
     override fun createPresenter() = presenter
+
+    override fun runItemClick(): Observable<Int> =
+        clickTest
 
     override fun render(state: MainMenuVS) {
         when(state){
@@ -68,11 +83,21 @@ class MainMenuController:MviController<MainMenuView,MainMenuPresenter>(),MainMen
     }
     private fun renderDisplay(state:MainMenuVS.Display){
 
-        description.text = state.selectedDay.description
+        description.text = state.displayedRunItem.description
         adapter.clear()
-        adapter.addAll(state.runList.map {
-            RunRecyclerItem(it)
-        })
+
+        state.runList.forEachIndexed { index, runDay ->
+            val selected = index == state.selectedDay
+
+            adapter.add(RunRecyclerItem(runDay,selected))
+        }
+//        adapter.addAll(state.runList.map {
+//            if(state.runList.indexOf(it) == state.selectedDay){
+//                RunRecyclerItem(it,true)
+//            } else {
+//                RunRecyclerItem(it)
+//            }
+//        })
         isLoading(false)
     }
     private fun renderLoading(){
@@ -80,17 +105,11 @@ class MainMenuController:MviController<MainMenuView,MainMenuPresenter>(),MainMen
     }
     private fun isLoading(loading:Boolean){
         if(loading){
-            description.visibility = View.GONE
+            displayCard.visibility = View.GONE
             progressBar.visibility = View.VISIBLE
-            image.visibility = View.GONE
-            recyclerView.visibility = View.GONE
-            desplayCard.visibility = View.GONE
         } else{
-            description.visibility = View.VISIBLE
+            displayCard.visibility = View.VISIBLE
             progressBar.visibility = View.GONE
-            image.visibility = View.VISIBLE
-            recyclerView.visibility = View.VISIBLE
-            desplayCard.visibility = View.VISIBLE
         }
 
     }
