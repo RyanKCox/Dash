@@ -1,6 +1,7 @@
 package com.revature.dash.presentation.controllers.mainmenu
 
 import android.os.Bundle
+import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -84,6 +85,7 @@ class MainMenuController:MviController<MainMenuView,MainMenuPresenter>(),MainMen
     private fun renderDisplay(state:MainMenuVS.Display){
 
         description.text = state.displayedRunItem.description
+        description.movementMethod = ScrollingMovementMethod()
         adapter.clear()
 
         state.runList.forEachIndexed { index, runDay ->
