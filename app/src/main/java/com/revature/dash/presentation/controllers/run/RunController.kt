@@ -13,6 +13,7 @@ import com.revature.dash.R
 import com.revature.dash.databinding.ControllerRunScreenBinding
 import com.revature.dash.domain.routine.RunRoutine
 import io.reactivex.Observable
+import java.text.SimpleDateFormat
 
 class RunController :MviController<RunView,RunPresenter>(),RunView{
 
@@ -45,11 +46,7 @@ class RunController :MviController<RunView,RunPresenter>(),RunView{
 
     override fun createPresenter() = presenter
 
-    override fun toggleStart()=startButton.clicks()
-    override fun updateTimer(): Observable<Long> {
-        TODO("Not yet implemented")
-    }
-
+    override fun toggleStart() = startButton.clicks()
 
     override fun render(state: RunVS) {
         when(state){
@@ -59,8 +56,10 @@ class RunController :MviController<RunView,RunPresenter>(),RunView{
     }
     private fun renderDisplay(state:RunVS.DisplayRun){
 
-        description.text = state.runItem.getDescriptionWithTime()
+        description.text = state.runDay.runCycle.description
         startButton.text = if(state.isStarted) "Pause" else "Start"
+        timer.text = SimpleDateFormat("mm:ss").format(state.timeLeft)
+        timerLabel.text = "Timer: ${SimpleDateFormat("mm:ss").format(state.runDay.runCycle.getTotalTime())}"
 
         isLoading(false)
     }

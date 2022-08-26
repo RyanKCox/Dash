@@ -92,12 +92,12 @@ class MainMenuController:MviController<MainMenuView,MainMenuPresenter>(),MainMen
     }
     private fun renderDisplay(state:MainMenuVS.Display){
 
-        description.text = state.displayedRunItem.getDescriptionWithTime()
+        description.text = state.selectedRunDay.runCycle.description//.displayedRunItem.getDescriptionWithTime()
         description.movementMethod = ScrollingMovementMethod()
         adapter.clear()
 
         state.runList.forEachIndexed { index, runDay ->
-            val selected = index == state.selectedDay
+            val selected = runDay == state.selectedRunDay //index == state.selectedDay
 
             adapter.add(RunRecyclerItem(runDay,selected))
         }

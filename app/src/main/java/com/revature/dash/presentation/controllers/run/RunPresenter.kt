@@ -1,18 +1,22 @@
 package com.revature.dash.presentation.controllers.run
 
+import android.os.CountDownTimer
 import com.hannesdorfmann.mosby3.mvi.MviBasePresenter
 import com.hannesdorfmann.mosby3.mvp.MvpView
 import com.revature.dash.domain.routine.RunRoutine
-import com.revature.dash.model.data.RunItem
+import com.revature.dash.model.data.RunDay
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.subjects.PublishSubject
 
 class RunPresenter(
     private val runRepo:RunRoutine
 ):MviBasePresenter<RunView,RunVS>() {
 
     private var isStarted = false
-    private val selectedRun = runRepo.getRunTypeID(runRepo.getRoutine()[0].runType)
+//    private val selectedRun = runRepo.getSelectedRunDay()
+    private var countDownTimer:CountDownTimer? = null
+    private val publishSubject = PublishSubject.create<Long>()
 
     override fun bindIntents() {
 
@@ -20,17 +24,36 @@ class RunPresenter(
             .map {
                 isStarted = !isStarted
 
-                RunVS.DisplayRun(isStarted,selectedRun)
+
+                if(countDownTimer == null){
+                    countDownTimer = object: CountDownTimer(25*60000,1000){
+                        override fun onTick(p0: Long) {
+                            publishSubject.onNext(p0)
+                        }
+
+                        override fun onFinish() {
+                            publishSubject.onNext(0)
+                        }
+                    }
+                        .start()
+                }
+                else{
+                    if(isStarted){
+                        countDownTimer!!.start()
+                    }
+                }
+
+                RunVS.DisplayRun(isStarted,runRepo.getSelectedRunDay().runCycle.getTotalTime(),runRepo.getSelectedRunDay())
             }
             .ofType(RunVS::class.java)
 
-        val updateIntent = intent { it.updateTimer() }
+        val updateIntent = intent { publishSubject }
             .map {
-                RunVS.DisplayRun(isStarted,selectedRun)
+                RunVS.DisplayRun(isStarted,it,runRepo.getSelectedRunDay())
             }
             .ofType(RunVS::class.java)
 
-        val data = Observable.just(RunVS.DisplayRun(isStarted,selectedRun))
+        val data = Observable.just(RunVS.DisplayRun(isStarted,0,runRepo.getSelectedRunDay(),))
             .ofType(RunVS::class.java)
 
         val viewState = data
@@ -45,7 +68,6 @@ class RunPresenter(
 interface RunView:MvpView{
 
     fun toggleStart(): Observable<Unit>
-    fun updateTimer():Observable<Long>
 
     fun render(state:RunVS)
 }
@@ -53,5 +75,7 @@ sealed class RunVS{
     object Loading:RunVS()
     data class DisplayRun(
         val isStarted:Boolean,
-        val runItem: RunItem):RunVS()
+        val timeLeft:Long,
+        val runDay: RunDay
+    ):RunVS()
 }
