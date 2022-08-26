@@ -45,8 +45,6 @@ class MainMenuPresenter(
             selectedDay,
             runRepo.getRunTypeID(runRepo.getRoutine()[selectedDay].runType),
             runRepo.getRoutine()))
-
-            .delay(2,TimeUnit.SECONDS)
             .ofType(MainMenuVS::class.java)
 
         val viewState = data

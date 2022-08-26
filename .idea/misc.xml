@@ -3,10 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/RyanK/AndroidStudioProjects/Dash/app/src/main/res/layout-land/controller_mainmenu.xml" value="0.21164021164021163" />
+        <entry key="..\:/Users/RyanK/AndroidStudioProjects/Dash/app/src/main/res/layout-land/controller_title_screen.xml" value="0.13854166666666667" />
         <entry key="..\:/Users/RyanK/AndroidStudioProjects/Dash/app/src/main/res/layout/activity_main.xml" value="0.2359375" />
         <entry key="..\:/Users/RyanK/AndroidStudioProjects/Dash/app/src/main/res/layout/controller_mainmenu.xml" value="0.264" />
         <entry key="..\:/Users/RyanK/AndroidStudioProjects/Dash/app/src/main/res/layout/controller_run_screen.xml" value="0.24895833333333334" />
-        <entry key="..\:/Users/RyanK/AndroidStudioProjects/Dash/app/src/main/res/layout/controller_title_screen.xml" value="0.1" />
+        <entry key="..\:/Users/RyanK/AndroidStudioProjects/Dash/app/src/main/res/layout/controller_title_screen.xml" value="0.2" />
         <entry key="..\:/Users/RyanK/AndroidStudioProjects/Dash/app/src/main/res/layout/running_item.xml" value="0.20742753623188406" />
       </map>
     </option>

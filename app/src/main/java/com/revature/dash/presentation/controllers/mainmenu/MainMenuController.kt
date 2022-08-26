@@ -18,7 +18,6 @@ import com.jakewharton.rxbinding2.view.clicks
 import com.revature.dash.R
 import com.revature.dash.databinding.ControllerMainmenuBinding
 import com.revature.dash.domain.routine.RunRoutine
-import com.revature.dash.model.data.RunDay
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import io.reactivex.Observable
@@ -93,7 +92,7 @@ class MainMenuController:MviController<MainMenuView,MainMenuPresenter>(),MainMen
     }
     private fun renderDisplay(state:MainMenuVS.Display){
 
-        description.text = state.displayedRunItem.description
+        description.text = state.displayedRunItem.getDescriptionWithTime()
         description.movementMethod = ScrollingMovementMethod()
         adapter.clear()
 

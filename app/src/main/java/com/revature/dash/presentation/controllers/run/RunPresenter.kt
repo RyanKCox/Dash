@@ -12,21 +12,30 @@ class RunPresenter(
 ):MviBasePresenter<RunView,RunVS>() {
 
     private var isStarted = false
+    private val selectedRun = runRepo.getRunTypeID(runRepo.getRoutine()[0].runType)
 
     override fun bindIntents() {
 
         val toggleStart = intent { it.toggleStart() }
             .map {
                 isStarted = !isStarted
-                RunVS.DisplayRun(isStarted,runRepo.getRunTypeID(0))
+
+                RunVS.DisplayRun(isStarted,selectedRun)
             }
             .ofType(RunVS::class.java)
 
-        val data = Observable.just(RunVS.DisplayRun(isStarted,runRepo.getRunTypeID(0)))
+        val updateIntent = intent { it.updateTimer() }
+            .map {
+                RunVS.DisplayRun(isStarted,selectedRun)
+            }
+            .ofType(RunVS::class.java)
+
+        val data = Observable.just(RunVS.DisplayRun(isStarted,selectedRun))
             .ofType(RunVS::class.java)
 
         val viewState = data
             .mergeWith(toggleStart)
+            .mergeWith(updateIntent)
             .observeOn(AndroidSchedulers.mainThread())
 
         subscribeViewState(viewState){view,state-> view.render(state)}
@@ -36,6 +45,7 @@ class RunPresenter(
 interface RunView:MvpView{
 
     fun toggleStart(): Observable<Unit>
+    fun updateTimer():Observable<Long>
 
     fun render(state:RunVS)
 }

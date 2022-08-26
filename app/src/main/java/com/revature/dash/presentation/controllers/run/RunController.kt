@@ -21,6 +21,8 @@ class RunController :MviController<RunView,RunPresenter>(),RunView{
     private lateinit var image:ImageView
     private lateinit var description:TextView
     private lateinit var startButton: Button
+    private lateinit var timerLabel:TextView
+    private lateinit var timer:TextView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,11 +39,17 @@ class RunController :MviController<RunView,RunPresenter>(),RunView{
         image = binder.imageRun
         description = binder.textDescriptionRun
         startButton = binder.buttonStart
+        timerLabel = binder.textTimerLabel
+        timer = binder.textTimer
     }
 
     override fun createPresenter() = presenter
 
-    override fun toggleStart() = startButton.clicks()
+    override fun toggleStart()=startButton.clicks()
+    override fun updateTimer(): Observable<Long> {
+        TODO("Not yet implemented")
+    }
+
 
     override fun render(state: RunVS) {
         when(state){
@@ -51,7 +59,7 @@ class RunController :MviController<RunView,RunPresenter>(),RunView{
     }
     private fun renderDisplay(state:RunVS.DisplayRun){
 
-        description.text = state.runItem.description
+        description.text = state.runItem.getDescriptionWithTime()
         startButton.text = if(state.isStarted) "Pause" else "Start"
 
         isLoading(false)

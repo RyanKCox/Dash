@@ -14,10 +14,6 @@ import java.util.concurrent.TimeUnit
 class TitlePresenter :MviBasePresenter<TitleView,TitleVS>(){
     override fun bindIntents() {
 
-
-        val fakeLoading = Observable.just(TitleVS.Loading)
-            .ofType(TitleVS::class.java)
-
         val enterClick = intent { it.enterIntent() }
             .doOnNext { router->
                 //Navigate
@@ -27,12 +23,10 @@ class TitlePresenter :MviBasePresenter<TitleView,TitleVS>(){
             .ofType(TitleVS::class.java)
 
         val data = Observable.just(TitleVS.Display)
-            .delay(2,TimeUnit.SECONDS)
             .ofType(TitleVS::class.java)
 
 
-        val viewState = fakeLoading
-            .mergeWith(data)
+        val viewState = data
             .mergeWith(enterClick)
             .observeOn(AndroidSchedulers.mainThread())
 
