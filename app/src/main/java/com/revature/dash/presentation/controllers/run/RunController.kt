@@ -12,7 +12,6 @@ import com.jakewharton.rxbinding2.view.clicks
 import com.revature.dash.R
 import com.revature.dash.databinding.ControllerRunScreenBinding
 import com.revature.dash.domain.routine.RunRoutine
-import io.reactivex.Observable
 import java.text.SimpleDateFormat
 
 class RunController :MviController<RunView,RunPresenter>(),RunView{
@@ -36,6 +35,7 @@ class RunController :MviController<RunView,RunPresenter>(),RunView{
     }
     private fun setup(view:View){
         presenter = RunPresenter(RunRoutine())
+
         val binder = ControllerRunScreenBinding.bind(view)
         image = binder.imageRun
         description = binder.textDescriptionRun

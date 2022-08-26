@@ -3,6 +3,7 @@ package com.revature.dash.presentation.controllers.run
 import android.os.CountDownTimer
 import com.hannesdorfmann.mosby3.mvi.MviBasePresenter
 import com.hannesdorfmann.mosby3.mvp.MvpView
+import com.revature.dash.domain.routine.IRunRoutine
 import com.revature.dash.domain.routine.RunRoutine
 import com.revature.dash.model.data.RunDay
 import io.reactivex.Observable
@@ -10,11 +11,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.subjects.PublishSubject
 
 class RunPresenter(
-    private val runRepo:RunRoutine
+    private val runRepo: IRunRoutine
 ):MviBasePresenter<RunView,RunVS>() {
 
     private var isStarted = false
-//    private val selectedRun = runRepo.getSelectedRunDay()
     private var countDownTimer:CountDownTimer? = null
     private val publishSubject = PublishSubject.create<Long>()
 
@@ -26,7 +26,7 @@ class RunPresenter(
 
 
                 if(countDownTimer == null){
-                    countDownTimer = object: CountDownTimer(25*60000,1000){
+                    countDownTimer = object: CountDownTimer(runRepo.getSelectedRunDay().runCycle.getTotalTime(),1000){
                         override fun onTick(p0: Long) {
                             publishSubject.onNext(p0)
                         }
@@ -53,7 +53,7 @@ class RunPresenter(
             }
             .ofType(RunVS::class.java)
 
-        val data = Observable.just(RunVS.DisplayRun(isStarted,0,runRepo.getSelectedRunDay(),))
+        val data = Observable.just(RunVS.DisplayRun(isStarted,runRepo.getSelectedRunDay().runCycle.getTotalTime(),runRepo.getSelectedRunDay(),))
             .ofType(RunVS::class.java)
 
         val viewState = data

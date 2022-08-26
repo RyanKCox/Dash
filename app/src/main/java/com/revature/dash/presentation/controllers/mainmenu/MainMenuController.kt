@@ -17,15 +17,21 @@ import com.hannesdorfmann.mosby3.MviController
 import com.jakewharton.rxbinding2.view.clicks
 import com.revature.dash.R
 import com.revature.dash.databinding.ControllerMainmenuBinding
+import com.revature.dash.domain.routine.IRunRoutine
 import com.revature.dash.domain.routine.RunRoutine
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
+import javax.inject.Inject
 
 class MainMenuController:MviController<MainMenuView,MainMenuPresenter>(),MainMenuView {
 
     private lateinit var presenter:MainMenuPresenter
+
+    @Inject
+    lateinit var runRepo:IRunRoutine
+
     private val adapter : GroupAdapter<GroupieViewHolder> = GroupAdapter()
 
     private lateinit var description:TextView
@@ -50,7 +56,10 @@ class MainMenuController:MviController<MainMenuView,MainMenuPresenter>(),MainMen
     }
 
     private fun setupController(view: View) {
-        presenter = MainMenuPresenter(RunRoutine())
+        //Remove when dagger is implemented
+        runRepo = RunRoutine()
+        presenter = MainMenuPresenter(runRepo)
+
         val binding = ControllerMainmenuBinding.bind(view)
         description = binding.textDescriptionMainmenu
         progressBar = binding.progressBar

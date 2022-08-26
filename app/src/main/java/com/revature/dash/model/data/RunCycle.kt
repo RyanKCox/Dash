@@ -20,10 +20,12 @@ class RunCycle(
         tempCycle.cycle = tempList
 
         var tempDescription = ""
+        val totalTime = warmupTime + (numCycles * runTime) + (numCycles * walkTime)
         if(warmupTime > 0L)
             tempDescription += "Start with a WarmUp walk for ${ SimpleDateFormat("mm:ss").format(warmupTime)} minutes. "
         tempDescription += "Alternate between running for ${ SimpleDateFormat("mm:ss").format(runTime)} " +
-                "minutes and walking for ${ SimpleDateFormat("mm:ss").format(runTime)} minutes."
+                "minutes and walking for ${ SimpleDateFormat("mm:ss").format(runTime)} minutes. " +
+                "For a total of ${SimpleDateFormat("mm:ss").format(totalTime)} minutes"
 
         tempCycle.description = tempDescription
         tempCycle.isCompleted = false

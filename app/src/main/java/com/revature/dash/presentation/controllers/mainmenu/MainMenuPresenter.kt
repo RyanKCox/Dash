@@ -5,6 +5,7 @@ import com.bluelinelabs.conductor.RouterTransaction
 import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 import com.hannesdorfmann.mosby3.mvi.MviBasePresenter
 import com.hannesdorfmann.mosby3.mvp.MvpView
+import com.revature.dash.domain.routine.IRunRoutine
 import com.revature.dash.domain.routine.RunRoutine
 import com.revature.dash.model.data.RunDay
 import com.revature.dash.presentation.controllers.run.RunController
@@ -12,7 +13,7 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 
 class MainMenuPresenter(
-    private val runRepo:RunRoutine
+    private val runRepo: IRunRoutine
 ):MviBasePresenter<MainMenuView,MainMenuVS>() {
 
 

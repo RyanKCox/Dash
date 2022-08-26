@@ -4,6 +4,7 @@
     package="com.revature.dash">
 
     <application
+        android:name=".presentation.DashApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
