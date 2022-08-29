@@ -1,7 +1,5 @@
 package com.revature.dash.presentation.controllers.title
 
-import android.content.Context
-import android.widget.Toast
 import com.bluelinelabs.conductor.Router
 import com.bluelinelabs.conductor.RouterTransaction
 import com.hannesdorfmann.mosby3.mvi.MviBasePresenter
@@ -9,9 +7,9 @@ import com.hannesdorfmann.mosby3.mvp.MvpView
 import com.revature.dash.presentation.controllers.mainmenu.MainMenuController
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-class TitlePresenter :MviBasePresenter<TitleView,TitleVS>(){
+class TitlePresenter @Inject constructor() :MviBasePresenter<TitleView,TitleVS>(){
     override fun bindIntents() {
 
         val enterClick = intent { it.enterIntent() }

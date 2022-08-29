@@ -1,13 +1,22 @@
 package com.revature.dash.presentation
 
+import android.app.Application
+import com.bluelinelabs.conductor.Controller
 import com.revature.dash.presentation.core.di.DaggerAppComponent
-import dagger.android.AndroidInjector
-import dagger.android.support.DaggerApplication
+import com.revature.dash.presentation.core.di.HasControllerInjector
+import dagger.android.DispatchingAndroidInjector
+import javax.inject.Inject
 
-class DashApp :DaggerApplication(){
+class DashApp :Application(),HasControllerInjector{
 
-    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
-        return DaggerAppComponent.factory().create(this)
+    @Inject
+    lateinit var controllerInjector:DispatchingAndroidInjector<Controller>
+
+    override fun onCreate() {
+        super.onCreate()
+        DaggerAppComponent.factory().create(this).inject(this)
     }
+
+    override fun controllerInjector() = controllerInjector
 
 }

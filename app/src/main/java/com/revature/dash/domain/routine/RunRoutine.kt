@@ -2,7 +2,6 @@ package com.revature.dash.domain.routine
 
 import com.revature.dash.model.data.RunCycle
 import com.revature.dash.model.data.RunDay
-import com.revature.dash.presentation.core.di.scope.PerActivity
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,18 +18,18 @@ interface IRunRoutine {
 class RunRoutine @Inject constructor() : IRunRoutine {
 
     override val defaultRunList = listOf(
-        RunDay(RunCycle().Builder(5*60000,8,60000,(1.5*60000).toLong()),false),
-        RunDay(RunCycle().Builder(5*60000,8,60000,(1.5*60000).toLong()),false),
-        RunDay(RunCycle().Builder(5*60000,8,60000,(1.5*60000).toLong()),false),
-        RunDay(RunCycle().Builder(5*60000,6,(1.5*60000).toLong(),(2*60000)),false),
-        RunDay(RunCycle().Builder(5*60000,6,(1.5*60000).toLong(),(2*60000)),false),
-        RunDay(RunCycle().Builder(5*60000,6,(1.5*60000).toLong(),(2*60000)),false),
-        RunDay(RunCycle().Builder(5*60000,5,(2*60000),(2*60000)),false),
-        RunDay(RunCycle().Builder(5*60000,5,(2*60000),(2*60000)),false),
-        RunDay(RunCycle().Builder(5*60000,5,(2*60000),(2*60000)),false),
-        RunDay(RunCycle().Builder(5*60000,2,(5*60000),(5*60000)),false),
-        RunDay(RunCycle().Builder(5*60000,2,(5*60000),(5*60000)),false),
-        RunDay(RunCycle().Builder(5*60000,2,(5*60000),(5*60000)),false)
+        RunDay(RunCycle().builder(5*60000,8,60000,(1.5*60000).toLong()),false),
+        RunDay(RunCycle().builder(5*60000,8,60000,(1.5*60000).toLong()),false),
+        RunDay(RunCycle().builder(5*60000,8,60000,(1.5*60000).toLong()),false),
+        RunDay(RunCycle().builder(5*60000,6,(1.5*60000).toLong(),(2*60000)),false),
+        RunDay(RunCycle().builder(5*60000,6,(1.5*60000).toLong(),(2*60000)),false),
+        RunDay(RunCycle().builder(5*60000,6,(1.5*60000).toLong(),(2*60000)),false),
+        RunDay(RunCycle().builder(5*60000,5,(2*60000),(2*60000)),false),
+        RunDay(RunCycle().builder(5*60000,5,(2*60000),(2*60000)),false),
+        RunDay(RunCycle().builder(5*60000,5,(2*60000),(2*60000)),false),
+        RunDay(RunCycle().builder(5*60000,2,(5*60000),(5*60000)),false),
+        RunDay(RunCycle().builder(5*60000,2,(5*60000),(5*60000)),false),
+        RunDay(RunCycle().builder(5*60000,2,(5*60000),(5*60000)),false)
     )
 
     override var selectedRun = getNextRunDay()

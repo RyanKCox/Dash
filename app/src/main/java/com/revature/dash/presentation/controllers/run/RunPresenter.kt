@@ -4,13 +4,13 @@ import android.os.CountDownTimer
 import com.hannesdorfmann.mosby3.mvi.MviBasePresenter
 import com.hannesdorfmann.mosby3.mvp.MvpView
 import com.revature.dash.domain.routine.IRunRoutine
-import com.revature.dash.domain.routine.RunRoutine
 import com.revature.dash.model.data.RunDay
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.subjects.PublishSubject
+import javax.inject.Inject
 
-class RunPresenter(
+class RunPresenter @Inject constructor(
     private val runRepo: IRunRoutine
 ):MviBasePresenter<RunView,RunVS>() {
 

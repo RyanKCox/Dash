@@ -10,8 +10,9 @@ import com.revature.dash.model.data.RunDay
 import com.revature.dash.presentation.controllers.run.RunController
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import javax.inject.Inject
 
-class MainMenuPresenter(
+class MainMenuPresenter @Inject constructor(
     private val runRepo: IRunRoutine
 ):MviBasePresenter<MainMenuView,MainMenuVS>() {
 

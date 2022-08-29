@@ -2,13 +2,12 @@ package com.revature.dash.model.data
 
 import java.text.SimpleDateFormat
 
-class RunCycle(
-){
-    lateinit var cycle:List<Pair<String,Long>>
+class RunCycle {
+    private lateinit var cycle:List<Pair<String,Long>>
     lateinit var description:String
-    var isCompleted = false
+    private var isCompleted = false
 
-    fun Builder(warmupTime:Long,numCycles:Int,runTime:Long,walkTime:Long):RunCycle{
+    fun builder(warmupTime:Long, numCycles:Int, runTime:Long, walkTime:Long):RunCycle{
         val tempCycle = RunCycle()
         val tempList = mutableListOf(
             Pair("WarmUp",warmupTime)

@@ -5,16 +5,12 @@ import android.util.Log
 import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
 import com.revature.dash.databinding.ActivityMainBinding
-import com.revature.dash.domain.routine.IRunRoutine
 import com.revature.dash.presentation.controllers.title.TitleController
 import com.revature.dash.presentation.core.activity.BaseActivity
-import javax.inject.Inject
 
 class MainActivity : BaseActivity() {
 
     private lateinit var controllerContainer:ViewGroup
-    @Inject
-    lateinit var runRoutine: IRunRoutine
 
     override fun getViewBinding() = ActivityMainBinding.inflate(layoutInflater)
 

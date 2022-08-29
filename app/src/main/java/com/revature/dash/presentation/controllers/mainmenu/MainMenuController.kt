@@ -1,10 +1,7 @@
 package com.revature.dash.presentation.controllers.mainmenu
 
-import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -13,19 +10,16 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bluelinelabs.conductor.Router
-import com.hannesdorfmann.mosby3.MviController
 import com.jakewharton.rxbinding2.view.clicks
 import com.revature.dash.R
 import com.revature.dash.databinding.ControllerMainmenuBinding
-import com.revature.dash.presentation.MainActivity
+import com.revature.dash.presentation.core.conductor.MviBaseController
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 
-class MainMenuController:MviController<MainMenuView,MainMenuPresenter>(),MainMenuView {
-
-    private lateinit var presenter:MainMenuPresenter
+class MainMenuController:MviBaseController<MainMenuView,MainMenuPresenter>(),MainMenuView {
 
     private val adapter : GroupAdapter<GroupieViewHolder> = GroupAdapter()
 
@@ -38,21 +32,9 @@ class MainMenuController:MviController<MainMenuView,MainMenuPresenter>(),MainMen
 
     private var clickTest = PublishSubject.create<Int>()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup,
-        savedViewState: Bundle?,
-    ): View {
-        val view = inflater.inflate(R.layout.controller_mainmenu,container,false)
+    override fun getLayout() = R.layout.controller_mainmenu
 
-        setupController(view)
-
-        return view
-    }
-
-    private fun setupController(view: View) {
-        presenter = MainMenuPresenter((activity as MainActivity).runRoutine)
-
+    override fun onCreated(view: View) {
         val binding = ControllerMainmenuBinding.bind(view)
         description = binding.textDescriptionMainmenu
         progressBar = binding.progressBar
@@ -72,12 +54,8 @@ class MainMenuController:MviController<MainMenuView,MainMenuPresenter>(),MainMen
             if(item is RunRecyclerItem){
                 clickTest.onNext(adapter.getAdapterPosition(item))
             }
-
         }
-
     }
-
-    override fun createPresenter() = presenter
 
     override fun runItemClick(): Observable<Int> =
         clickTest
