@@ -6,7 +6,6 @@ import com.bluelinelabs.conductor.changehandler.FadeChangeHandler
 import com.hannesdorfmann.mosby3.mvi.MviBasePresenter
 import com.hannesdorfmann.mosby3.mvp.MvpView
 import com.revature.dash.domain.routine.IRunRoutine
-import com.revature.dash.domain.routine.RunRoutine
 import com.revature.dash.model.data.RunDay
 import com.revature.dash.presentation.controllers.run.RunController
 import io.reactivex.Observable
@@ -21,11 +20,8 @@ class MainMenuPresenter(
 
         val itemClicked = intent { it.runItemClick() }
             .map {
-//                selectedDay = it
                 runRepo.setSelectedRunDayByIndex(it)
                 MainMenuVS.Display(
-//                    selectedDay,
-//                    runRepo.getRunTypeID(runRepo.getRoutine()[selectedDay].runType),
                     runRepo.getSelectedRunDay(),
                     runRepo.getRoutine())
             }
@@ -40,8 +36,6 @@ class MainMenuPresenter(
             .ofType(MainMenuVS::class.java)
 
         val data = Observable.just(MainMenuVS.Display(
-//            selectedDay,
-//            runRepo.getRunTypeID(runRepo.getRoutine()[selectedDay].runType),
             runRepo.getSelectedRunDay(),
             runRepo.getRoutine()))
             .ofType(MainMenuVS::class.java)
@@ -66,7 +60,5 @@ sealed class MainMenuVS{
     object Loading:MainMenuVS()
     data class Display(
         val selectedRunDay:RunDay,
-//        val selectedDay:Int,
-//        val displayedRunDay:RunDay,
         val runList:List<RunDay>):MainMenuVS()
 }

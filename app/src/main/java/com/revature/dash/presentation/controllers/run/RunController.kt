@@ -11,12 +11,19 @@ import com.hannesdorfmann.mosby3.MviController
 import com.jakewharton.rxbinding2.view.clicks
 import com.revature.dash.R
 import com.revature.dash.databinding.ControllerRunScreenBinding
+import com.revature.dash.domain.routine.IRunRoutine
 import com.revature.dash.domain.routine.RunRoutine
+import com.revature.dash.presentation.MainActivity
 import java.text.SimpleDateFormat
+import javax.inject.Inject
 
 class RunController :MviController<RunView,RunPresenter>(),RunView{
 
     private lateinit var presenter: RunPresenter
+//    @Inject
+//    lateinit var runRepo: IRunRoutine
+//    var runRepo = (activity as MainActivity).runRoutine
+
 
     private lateinit var image:ImageView
     private lateinit var description:TextView
@@ -34,7 +41,7 @@ class RunController :MviController<RunView,RunPresenter>(),RunView{
         return view
     }
     private fun setup(view:View){
-        presenter = RunPresenter(RunRoutine())
+        presenter = RunPresenter((activity as MainActivity).runRoutine)
 
         val binder = ControllerRunScreenBinding.bind(view)
         image = binder.imageRun

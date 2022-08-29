@@ -2,6 +2,7 @@ package com.revature.dash.domain.routine
 
 import com.revature.dash.model.data.RunCycle
 import com.revature.dash.model.data.RunDay
+import com.revature.dash.presentation.core.di.scope.PerActivity
 import javax.inject.Inject
 import javax.inject.Singleton
 

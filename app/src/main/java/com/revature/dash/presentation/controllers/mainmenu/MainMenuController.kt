@@ -17,20 +17,15 @@ import com.hannesdorfmann.mosby3.MviController
 import com.jakewharton.rxbinding2.view.clicks
 import com.revature.dash.R
 import com.revature.dash.databinding.ControllerMainmenuBinding
-import com.revature.dash.domain.routine.IRunRoutine
-import com.revature.dash.domain.routine.RunRoutine
+import com.revature.dash.presentation.MainActivity
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
-import javax.inject.Inject
 
 class MainMenuController:MviController<MainMenuView,MainMenuPresenter>(),MainMenuView {
 
     private lateinit var presenter:MainMenuPresenter
-
-    @Inject
-    lateinit var runRepo:IRunRoutine
 
     private val adapter : GroupAdapter<GroupieViewHolder> = GroupAdapter()
 
@@ -56,9 +51,7 @@ class MainMenuController:MviController<MainMenuView,MainMenuPresenter>(),MainMen
     }
 
     private fun setupController(view: View) {
-        //Remove when dagger is implemented
-        runRepo = RunRoutine()
-        presenter = MainMenuPresenter(runRepo)
+        presenter = MainMenuPresenter((activity as MainActivity).runRoutine)
 
         val binding = ControllerMainmenuBinding.bind(view)
         description = binding.textDescriptionMainmenu
@@ -101,12 +94,12 @@ class MainMenuController:MviController<MainMenuView,MainMenuPresenter>(),MainMen
     }
     private fun renderDisplay(state:MainMenuVS.Display){
 
-        description.text = state.selectedRunDay.runCycle.description//.displayedRunItem.getDescriptionWithTime()
+        description.text = state.selectedRunDay.runCycle.description
         description.movementMethod = ScrollingMovementMethod()
         adapter.clear()
 
-        state.runList.forEachIndexed { index, runDay ->
-            val selected = runDay == state.selectedRunDay //index == state.selectedDay
+        state.runList.forEach { runDay ->
+            val selected = runDay == state.selectedRunDay
 
             adapter.add(RunRecyclerItem(runDay,selected))
         }

@@ -16,7 +16,6 @@ class RunRecyclerItem(val runDay: RunDay, private val selected:Boolean = false)
 
             viewBinding.root.setCardBackgroundColor(
                 if(selected) Color.CYAN else Color.WHITE)
-//        viewBinding.
 
         viewBinding.itemProgress.text = "Day: $position"
     }

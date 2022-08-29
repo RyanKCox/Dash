@@ -13,7 +13,7 @@ class RunCycle(
         val tempList = mutableListOf(
             Pair("WarmUp",warmupTime)
         )
-        (0..numCycles).forEach { _ ->
+        (1..numCycles).forEach { _ ->
             tempList.add(Pair("Run",runTime))
             tempList.add(Pair("Walk",walkTime))
         }
