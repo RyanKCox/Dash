@@ -1,15 +1,12 @@
 package com.revature.dash.domain.routine
 
+import android.app.Application
 import android.util.Log
-import androidx.lifecycle.LiveData
 import com.revature.dash.model.data.RunCycle
 import com.revature.dash.model.data.RunDay
 import com.revature.dash.model.data.retrofit.RoutineAPI
+import com.revature.dash.model.data.room.RoutineDao
 import io.reactivex.Observable
-import io.reactivex.Single
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,7 +22,9 @@ interface IRunRoutine {
 }
 @Singleton
 class RunRoutine @Inject constructor(
-    private val routineAPI:RoutineAPI
+    private val routineAPI:RoutineAPI,
+    private val application: Application,
+    private val routineDao: RoutineDao
 ) : IRunRoutine {
 
 
@@ -40,7 +39,8 @@ class RunRoutine @Inject constructor(
             .map { response->
                 response.forEach { cycle ->
                     defaultRunList.add(
-                        RunDay(RunCycle().builder(
+                        RunDay(0,
+                            RunCycle().builder(
                             (cycle.warmup * 60000).toLong(),
                             cycle.numCycles.toInt(),
                             (cycle.runTime * 60000).toLong(),

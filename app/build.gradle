@@ -84,9 +84,10 @@ dependencies {
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
     implementation "com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.3"
 
-    //Coroutines
-    def coroutine_version = "1.6.0"
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version")
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
+    //Room
+    def roomVersion = "2.4.3"
+    implementation "androidx.room:room-ktx:$roomVersion"
+    kapt "androidx.room:room-compiler:$roomVersion"
+    implementation("androidx.room:room-rxjava2:$roomVersion")
 
 }

@@ -1,7 +1,11 @@
 package com.revature.dash.presentation.core.di.module
 
+import android.app.Application
+import androidx.room.Room
 import com.revature.dash.model.data.retrofit.RetroFitConstants
 import com.revature.dash.model.data.retrofit.RoutineAPI
+import com.revature.dash.model.data.room.RoutineDao
+import com.revature.dash.model.data.room.RoutineDatabase
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -13,7 +17,6 @@ import javax.inject.Singleton
 
 @Module
 class AppModule {
-
 
     @Singleton
     @Provides
@@ -27,9 +30,28 @@ class AppModule {
                     .apply { level = HttpLoggingInterceptor.Level.BODY }).build())
             .build()
     }
+
     @Singleton
     @Provides
     fun provideRoutineAPI(retrofit:Retrofit):RoutineAPI{
         return retrofit.create(RoutineAPI::class.java)
     }
+
+    @Singleton
+    @Provides
+    fun provideRoutineDB(app: Application):RoutineDatabase {
+        return Room.databaseBuilder(
+            app,
+            RoutineDatabase::class.java,
+            "routineDB"
+        ).build()
+    }
+
+    @Singleton
+    @Provides
+    fun provideRoutineDao(routineDatabase: RoutineDatabase):RoutineDao{
+        return routineDatabase.getRoutineDao()
+    }
+
+
 }
