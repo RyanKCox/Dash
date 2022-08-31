@@ -10,20 +10,42 @@ import com.revature.dash.model.data.RunDay
 import com.revature.dash.presentation.controllers.run.RunController
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
 import javax.inject.Inject
 
 class MainMenuPresenter @Inject constructor(
     private val runRepo: IRunRoutine
 ):MviBasePresenter<MainMenuView,MainMenuVS>() {
 
+    private val publishSubject = PublishSubject.create<Boolean>()
+
 
     override fun bindIntents() {
+
+        val data = runRepo.fetchRoutine()
+            .doOnSubscribe { MainMenuVS.Loading }
+            .doOnNext {
+                publishSubject.onNext(true)
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .ofType(MainMenuVS::class.java)
+
+        val loadedIntent = intent { publishSubject }
+            .map {
+                MainMenuVS.Display(
+                    runRepo.getSelectedRunDay()!!,
+                    runRepo.getRoutine()
+                )
+            }
+            .ofType(MainMenuVS::class.java)
 
         val itemClicked = intent { it.runItemClick() }
             .map {
                 runRepo.setSelectedRunDayByIndex(it)
                 MainMenuVS.Display(
-                    runRepo.getSelectedRunDay(),
+                    runRepo.getSelectedRunDay()!!,
                     runRepo.getRoutine())
             }
             .ofType(MainMenuVS::class.java)
@@ -36,12 +58,13 @@ class MainMenuPresenter @Inject constructor(
             }
             .ofType(MainMenuVS::class.java)
 
-        val data = Observable.just(MainMenuVS.Display(
-            runRepo.getSelectedRunDay(),
-            runRepo.getRoutine()))
-            .ofType(MainMenuVS::class.java)
+//        val data = Observable.just(/*MainMenuVS.Loading)*/MainMenuVS.Display(
+//            runRepo.getSelectedRunDay()!!,
+//            runRepo.getRoutine()))
+//            .ofType(MainMenuVS::class.java)
 
         val viewState = data
+            .mergeWith(loadedIntent)
             .mergeWith(itemClicked)
             .mergeWith(startClicked)
             .observeOn(AndroidSchedulers.mainThread())

@@ -26,7 +26,7 @@ class RunPresenter @Inject constructor(
 
 
                 if(countDownTimer == null){
-                    countDownTimer = object: CountDownTimer(runRepo.getSelectedRunDay().runCycle.getTotalTime(),1000){
+                    countDownTimer = object: CountDownTimer(runRepo.getSelectedRunDay()!!.runCycle.getTotalTime(),1000){
                         override fun onTick(p0: Long) {
                             publishSubject.onNext(p0)
                         }
@@ -43,17 +43,17 @@ class RunPresenter @Inject constructor(
                     }
                 }
 
-                RunVS.DisplayRun(isStarted,runRepo.getSelectedRunDay().runCycle.getTotalTime(),runRepo.getSelectedRunDay())
+                RunVS.DisplayRun(isStarted,runRepo.getSelectedRunDay()!!.runCycle.getTotalTime(),runRepo.getSelectedRunDay()!!)
             }
             .ofType(RunVS::class.java)
 
         val updateIntent = intent { publishSubject }
             .map {
-                RunVS.DisplayRun(isStarted,it,runRepo.getSelectedRunDay())
+                RunVS.DisplayRun(isStarted,it,runRepo.getSelectedRunDay()!!)
             }
             .ofType(RunVS::class.java)
 
-        val data = Observable.just(RunVS.DisplayRun(isStarted,runRepo.getSelectedRunDay().runCycle.getTotalTime(),runRepo.getSelectedRunDay(),))
+        val data = Observable.just(RunVS.DisplayRun(isStarted,runRepo.getSelectedRunDay()!!.runCycle.getTotalTime(),runRepo.getSelectedRunDay()!!))
             .ofType(RunVS::class.java)
 
         val viewState = data
