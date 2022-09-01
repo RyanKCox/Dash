@@ -18,21 +18,21 @@ class MainMenuPresenter @Inject constructor(
     private val runRepo: IRunRoutine
 ):MviBasePresenter<MainMenuView,MainMenuVS>() {
 
-    private val publishSubject = PublishSubject.create<Boolean>()
+    private val routineLoadedSubject = PublishSubject.create<Boolean>()
 
 
     override fun bindIntents() {
 
-        val data = runRepo.fetchRoutine()
+        val data = runRepo.initializeRoutine()
             .doOnSubscribe { MainMenuVS.Loading }
-            .doOnNext {
-                publishSubject.onNext(true)
+            .doOnComplete {
+                routineLoadedSubject.onNext(true)
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .ofType(MainMenuVS::class.java)
 
-        val loadedIntent = intent { publishSubject }
+        val loadedIntent = intent { routineLoadedSubject }
             .map {
                 MainMenuVS.Display(
                     runRepo.getSelectedRunDay()!!,
@@ -58,13 +58,8 @@ class MainMenuPresenter @Inject constructor(
             }
             .ofType(MainMenuVS::class.java)
 
-//        val data = Observable.just(/*MainMenuVS.Loading)*/MainMenuVS.Display(
-//            runRepo.getSelectedRunDay()!!,
-//            runRepo.getRoutine()))
-//            .ofType(MainMenuVS::class.java)
-
-        val viewState = data
-            .mergeWith(loadedIntent)
+        val viewState = loadedIntent
+            .mergeWith(data)
             .mergeWith(itemClicked)
             .mergeWith(startClicked)
             .observeOn(AndroidSchedulers.mainThread())

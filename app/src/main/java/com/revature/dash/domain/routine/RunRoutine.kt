@@ -1,6 +1,5 @@
 package com.revature.dash.domain.routine
 
-import android.app.Application
 import android.util.Log
 import com.revature.dash.model.data.RunCycle
 import com.revature.dash.model.data.RunDay
@@ -18,21 +17,50 @@ interface IRunRoutine {
     fun setSelectedRunDayByIndex(index: Int)
     fun getRoutine(): List<RunDay>
     fun getNextRunDay(): RunDay?
-    fun fetchRoutine():Observable<MutableList<RunDay>>
+    fun initializeRoutine():Observable<MutableList<RunDay>>
 }
 @Singleton
 class RunRoutine @Inject constructor(
     private val routineAPI:RoutineAPI,
-    private val application: Application,
     private val routineDao: RoutineDao
 ) : IRunRoutine {
 
 
     override val defaultRunList: MutableList<RunDay> = mutableListOf()
 
-    override fun fetchRoutine(): Observable<MutableList<RunDay>> {
+    override fun initializeRoutine():Observable<MutableList<RunDay>>{
+        return routineDao.fetchRoutine()
+            .doOnError {
+                Log.d("RunRoutine","Loading from Room Failed")
+            }
+            .map { roomResponse->
+                if(roomResponse.isEmpty()){
+                    Log.d("RunRoutine","Loading from retrofit")
 
-        Log.d("RunRoutine","Fetch Routine Called")
+                    //Load by retrofit
+                    fetchRoutine()
+                        .doOnNext {
+                            defaultRunList.forEach {
+                                routineDao.insertRunDay(it)
+                            }
+                        }
+                        .blockingFirst()
+
+                    defaultRunList
+                }else {
+
+                    Log.d("RunRoutine", "Loading from room Size:${roomResponse.size}")
+                    defaultRunList.clear()
+                    defaultRunList.addAll(roomResponse)
+                    selectedRun = getNextRunDay()
+                    defaultRunList
+                }
+            }.toObservable()
+    }
+
+    private fun fetchRoutine(): Observable<MutableList<RunDay>> {
+
+        Log.d("RunRoutine","Fetch Routine from API Called")
 
         defaultRunList.clear()
         return routineAPI.getDefaultRoutine()

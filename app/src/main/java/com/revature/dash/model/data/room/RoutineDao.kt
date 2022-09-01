@@ -6,14 +6,15 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.revature.dash.model.data.RunDay
 import io.reactivex.Observable
+import io.reactivex.Single
 
 @Dao
 interface RoutineDao {
     @Query("SELECT * FROM routine")
-    fun fetchRoutine(): Observable<List<RunDay>>
+    fun fetchRoutine(): Single<List<RunDay>>
 
-//    @Insert(onConflict = OnConflictStrategy.REPLACE)
-//    fun insertRunDay(runDay: RunDay): Long
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertRunDay(runDay: RunDay): Long
 
     @Query("DELETE FROM routine WHERE id=:id")
     fun deleteRunDay(id: Long)
