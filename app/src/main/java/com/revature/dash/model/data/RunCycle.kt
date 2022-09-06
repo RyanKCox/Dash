@@ -8,7 +8,7 @@ data class RunItem(
 )
 
 class RunCycle {
-    private lateinit var cycle:List<RunItem/*Pair<String,Long>*/>
+    lateinit var cycle:List<RunItem/*Pair<String,Long>*/>
     lateinit var description:String
     private var isCompleted = false
 
@@ -28,7 +28,7 @@ class RunCycle {
         if(warmupTime > 0L)
             tempDescription += "Start with a WarmUp walk for ${ SimpleDateFormat("mm:ss").format(warmupTime)} minutes. "
         tempDescription += "Alternate between running for ${ SimpleDateFormat("mm:ss").format(runTime)} " +
-                "minutes and walking for ${ SimpleDateFormat("mm:ss").format(runTime)} minutes. " +
+                "minutes and walking for ${ SimpleDateFormat("mm:ss").format(walkTime)} minutes. " +
                 "For a total of ${SimpleDateFormat("mm:ss").format(totalTime)} minutes"
 
         tempCycle.description = tempDescription

@@ -46,12 +46,17 @@ class RunRoutine @Inject constructor(
                         }
                         .blockingFirst()
 
+                    defaultRunList.add(RunDay(runCycle = RunCycle().builder(5000,2,5000,5000)))
                     defaultRunList
                 }else {
 
                     Log.d("RunRoutine", "Loading from room Size:${roomResponse.size}")
                     defaultRunList.clear()
                     defaultRunList.addAll(roomResponse)
+
+                    defaultRunList.add(RunDay(runCycle = RunCycle().builder(5000,2,5000,5000)))
+                    defaultRunList.add(RunDay(runCycle = RunCycle().builder(5000,2,5000,5000)))
+
                     selectedRun = getNextRunDay()
                     defaultRunList
                 }

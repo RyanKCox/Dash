@@ -1,6 +1,7 @@
 package com.revature.dash.presentation.controllers.run
 
 import android.os.CountDownTimer
+import com.bluelinelabs.conductor.Router
 import com.hannesdorfmann.mosby3.mvi.MviBasePresenter
 import com.hannesdorfmann.mosby3.mvp.MvpView
 import com.revature.dash.domain.routine.IRunRoutine
@@ -16,7 +17,9 @@ class RunPresenter @Inject constructor(
 
     private var isStarted = false
     private var countDownTimer:CountDownTimer? = null
-    private val publishSubject = PublishSubject.create<Long>()
+    private val timerSubject = PublishSubject.create<Long>()
+    private val runDay = runRepo.getSelectedRunDay()!!
+    private var cycleIndex = 0
 
     override fun bindIntents() {
 
@@ -26,13 +29,14 @@ class RunPresenter @Inject constructor(
 
 
                 if(countDownTimer == null){
-                    countDownTimer = object: CountDownTimer(runRepo.getSelectedRunDay()!!.runCycle.getTotalTime(),1000){
+                    countDownTimer = object: CountDownTimer(runDay.runCycle.cycle[cycleIndex].time,1000){
                         override fun onTick(p0: Long) {
-                            publishSubject.onNext(p0)
+                            timerSubject.onNext(p0)
                         }
 
                         override fun onFinish() {
-                            publishSubject.onNext(0)
+                            timerSubject.onNext(0)
+                            advanceTimer(runDay.runCycle.cycle[cycleIndex].time)
                         }
                     }
                         .start()
@@ -43,31 +47,75 @@ class RunPresenter @Inject constructor(
                     }
                 }
 
-                RunVS.DisplayRun(isStarted,runRepo.getSelectedRunDay()!!.runCycle.getTotalTime(),runRepo.getSelectedRunDay()!!)
+                RunVS.DisplayRun(isStarted,runDay.runCycle.getTotalTime(),
+                    cycleIndex,runDay)
             }
             .ofType(RunVS::class.java)
 
-        val updateIntent = intent { publishSubject }
+        val updateIntent = intent { timerSubject }
             .map {
-                RunVS.DisplayRun(isStarted,it,runRepo.getSelectedRunDay()!!)
+                if(runDay.completed){
+                    RunVS.Completed
+                }
+                else {
+                    RunVS.DisplayRun(
+                        isStarted,
+                        it,
+                        cycleIndex,
+                        runDay)
+                }
             }
             .ofType(RunVS::class.java)
 
-        val data = Observable.just(RunVS.DisplayRun(isStarted,runRepo.getSelectedRunDay()!!.runCycle.getTotalTime(),runRepo.getSelectedRunDay()!!))
+        val doneIntent = intent { it.doneClick() }
+            .doOnNext{ router->
+                router.popCurrentController()
+            }
+            .ofType(RunVS::class.java)
+
+        val data = Observable.just(RunVS.DisplayRun(
+            isStarted,
+            runDay.runCycle.cycle[cycleIndex].time,
+            cycleIndex,
+            runDay))
             .ofType(RunVS::class.java)
 
         val viewState = data
             .mergeWith(toggleStart)
             .mergeWith(updateIntent)
+            .mergeWith(doneIntent)
             .observeOn(AndroidSchedulers.mainThread())
 
         subscribeViewState(viewState){view,state-> view.render(state)}
     }
 
+    private fun advanceTimer(time:Long):Boolean{
+        cycleIndex++
+
+        if(cycleIndex >= runDay.runCycle.cycle.size)
+            return false
+
+        countDownTimer = object :CountDownTimer(time,1000){
+            override fun onTick(p0: Long) {
+                timerSubject.onNext(p0)
+            }
+
+            override fun onFinish() {
+                if(!advanceTimer(runDay.runCycle.cycle[cycleIndex].time)) {
+                    runDay.completed = true
+                    timerSubject.onNext(0)
+                }
+            }
+
+        }.start()
+        return true
+
+    }
 }
 interface RunView:MvpView{
 
     fun toggleStart(): Observable<Unit>
+    fun doneClick():Observable<Router>
 
     fun render(state:RunVS)
 }
@@ -76,6 +124,8 @@ sealed class RunVS{
     data class DisplayRun(
         val isStarted:Boolean,
         val timeLeft:Long,
+        val runIndex:Int,
         val runDay: RunDay
     ):RunVS()
+    object Completed:RunVS()
 }
