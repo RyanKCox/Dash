@@ -103,6 +103,7 @@ class RunPresenter @Inject constructor(
             override fun onFinish() {
                 if(!advanceTimer(runDay.runCycle.cycle[cycleIndex].time)) {
                     runDay.completed = true
+                    runRepo.updateRunDay(runDay)
                     timerSubject.onNext(0)
                 }
             }

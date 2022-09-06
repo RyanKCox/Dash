@@ -6,6 +6,9 @@ import com.revature.dash.model.data.RunDay
 import com.revature.dash.model.data.retrofit.RoutineAPI
 import com.revature.dash.model.data.room.RoutineDao
 import io.reactivex.Observable
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -18,6 +21,7 @@ interface IRunRoutine {
     fun getRoutine(): List<RunDay>
     fun getNextRunDay(): RunDay?
     fun initializeRoutine():Observable<MutableList<RunDay>>
+    fun updateRunDay(updateDay: RunDay)
 }
 @Singleton
 class RunRoutine @Inject constructor(
@@ -40,22 +44,19 @@ class RunRoutine @Inject constructor(
                     //Load by retrofit
                     fetchRoutine()
                         .doOnNext {
+//                            routineDao.insertRunDay(RunDay(runCycle = RunCycle().builder(5000,2,5000,5000)))
+
                             defaultRunList.forEach {
                                 routineDao.insertRunDay(it)
                             }
                         }
                         .blockingFirst()
-
-                    defaultRunList.add(RunDay(runCycle = RunCycle().builder(5000,2,5000,5000)))
                     defaultRunList
                 }else {
 
                     Log.d("RunRoutine", "Loading from room Size:${roomResponse.size}")
                     defaultRunList.clear()
                     defaultRunList.addAll(roomResponse)
-
-                    defaultRunList.add(RunDay(runCycle = RunCycle().builder(5000,2,5000,5000)))
-                    defaultRunList.add(RunDay(runCycle = RunCycle().builder(5000,2,5000,5000)))
 
                     selectedRun = getNextRunDay()
                     defaultRunList
@@ -88,6 +89,15 @@ class RunRoutine @Inject constructor(
                 defaultRunList
 
         }
+    }
+
+    override fun updateRunDay(updateDay:RunDay){
+        Single.fromCallable {
+            routineDao.insertRunDay(updateDay)
+        }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
     }
 
     override var selectedRun = getNextRunDay()
