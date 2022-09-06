@@ -19,7 +19,9 @@ class RunPresenter @Inject constructor(
     private var countDownTimer:CountDownTimer? = null
     private val timerSubject = PublishSubject.create<Long>()
     private val runDay = runRepo.getSelectedRunDay()!!
+    private var complete = false
     private var cycleIndex = 0
+    private var cycleTime = runDay.runCycle.cycle[cycleIndex].time
 
     override fun bindIntents() {
 
@@ -29,32 +31,41 @@ class RunPresenter @Inject constructor(
 
 
                 if(countDownTimer == null){
-                    countDownTimer = object: CountDownTimer(runDay.runCycle.cycle[cycleIndex].time,1000){
-                        override fun onTick(p0: Long) {
-                            timerSubject.onNext(p0)
-                        }
-
-                        override fun onFinish() {
-                            timerSubject.onNext(0)
-                            advanceTimer(runDay.runCycle.cycle[cycleIndex].time)
-                        }
-                    }
-                        .start()
+//                    countDownTimer = object: CountDownTimer(runDay.runCycle.cycle[cycleIndex].time,1000){
+//                        override fun onTick(p0: Long) {
+//                            cycleTime = p0
+//                            timerSubject.onNext(p0)
+//                        }
+//
+//                        override fun onFinish() {
+//                            timerSubject.onNext(0)
+//                            advanceTimer(runDay.runCycle.cycle[cycleIndex].time)
+//                        }
+//                    }
+                    createTimer(runDay.runCycle.cycle[cycleIndex].time)
+//                    countDownTimer!!.start()
                 }
                 else{
                     if(isStarted){
-                        countDownTimer!!.start()
+                        createTimer(cycleTime)
+//                        countDownTimer!!.start()
+                    }
+                    else{
+                        countDownTimer!!.cancel()
                     }
                 }
 
-                RunVS.DisplayRun(isStarted,runDay.runCycle.getTotalTime(),
-                    cycleIndex,runDay)
+                RunVS.DisplayRun(
+                    isStarted,
+                    cycleTime,
+                    cycleIndex,
+                    runDay)
             }
             .ofType(RunVS::class.java)
 
         val updateIntent = intent { timerSubject }
             .map {
-                if(runDay.completed){
+                if(complete){
                     RunVS.Completed
                 }
                 else {
@@ -102,15 +113,44 @@ class RunPresenter @Inject constructor(
 
             override fun onFinish() {
                 if(!advanceTimer(runDay.runCycle.cycle[cycleIndex].time)) {
-                    runDay.completed = true
-                    runRepo.updateRunDay(runDay)
+                    complete = true
+
+                    if(!runDay.completed){
+                        runDay.completed = complete
+                        runRepo.updateRunDay(runDay)
+                    }
                     timerSubject.onNext(0)
                 }
             }
 
         }.start()
         return true
+    }
+    private fun createTimer(time:Long){
+        countDownTimer = object :CountDownTimer(time,1000){
+            override fun onTick(p0: Long) {
+                cycleTime = p0
+                timerSubject.onNext(p0)
+            }
 
+            override fun onFinish() {
+                timerSubject.onNext(0)
+                if(cycleIndex < runDay.runCycle.cycle.lastIndex){
+                    cycleIndex++
+                    createTimer(runDay.runCycle.cycle[cycleIndex].time)
+
+                }
+                else{
+                    complete = true
+                    if(!runDay.completed){
+                        runDay.completed = complete
+                        runRepo.updateRunDay(runDay)
+                    }
+                    timerSubject.onNext(0)
+                }
+            }
+
+        }.start()
     }
 }
 interface RunView:MvpView{

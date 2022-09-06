@@ -42,8 +42,9 @@ class RunRoutine @Inject constructor(
                     Log.d("RunRoutine","Loading from retrofit")
 
                     //Load by retrofit
-                    fetchRoutine()
+                    fetchRoutineFromAPI()
                         .doOnNext {
+                            //for testing
 //                            routineDao.insertRunDay(RunDay(runCycle = RunCycle().builder(5000,2,5000,5000)))
 
                             defaultRunList.forEach {
@@ -64,7 +65,7 @@ class RunRoutine @Inject constructor(
             }.toObservable()
     }
 
-    private fun fetchRoutine(): Observable<MutableList<RunDay>> {
+    private fun fetchRoutineFromAPI(): Observable<MutableList<RunDay>> {
 
         Log.d("RunRoutine","Fetch Routine from API Called")
 
