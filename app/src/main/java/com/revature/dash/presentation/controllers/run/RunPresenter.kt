@@ -31,24 +31,11 @@ class RunPresenter @Inject constructor(
 
 
                 if(countDownTimer == null){
-//                    countDownTimer = object: CountDownTimer(runDay.runCycle.cycle[cycleIndex].time,1000){
-//                        override fun onTick(p0: Long) {
-//                            cycleTime = p0
-//                            timerSubject.onNext(p0)
-//                        }
-//
-//                        override fun onFinish() {
-//                            timerSubject.onNext(0)
-//                            advanceTimer(runDay.runCycle.cycle[cycleIndex].time)
-//                        }
-//                    }
                     createTimer(runDay.runCycle.cycle[cycleIndex].time)
-//                    countDownTimer!!.start()
                 }
                 else{
                     if(isStarted){
                         createTimer(cycleTime)
-//                        countDownTimer!!.start()
                     }
                     else{
                         countDownTimer!!.cancel()
@@ -98,33 +85,6 @@ class RunPresenter @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
 
         subscribeViewState(viewState){view,state-> view.render(state)}
-    }
-
-    private fun advanceTimer(time:Long):Boolean{
-        cycleIndex++
-
-        if(cycleIndex >= runDay.runCycle.cycle.size)
-            return false
-
-        countDownTimer = object :CountDownTimer(time,1000){
-            override fun onTick(p0: Long) {
-                timerSubject.onNext(p0)
-            }
-
-            override fun onFinish() {
-                if(!advanceTimer(runDay.runCycle.cycle[cycleIndex].time)) {
-                    complete = true
-
-                    if(!runDay.completed){
-                        runDay.completed = complete
-                        runRepo.updateRunDay(runDay)
-                    }
-                    timerSubject.onNext(0)
-                }
-            }
-
-        }.start()
-        return true
     }
     private fun createTimer(time:Long){
         countDownTimer = object :CountDownTimer(time,1000){
